@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-import importlib
+import importlib.util
 
 
 def import_file(module_path='', module=''):
@@ -9,8 +9,10 @@ def import_file(module_path='', module=''):
     if module in sys.modules:
         del sys.modules[module]
     sys.path.insert(0, module_path)
-    loader = importlib.find_loader(module)
-    m = loader.load_module(module)
+    spec = importlib.util.find_spec(module)
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    #sys.modules[module] = m
     del sys.path[0]
     return m
 
